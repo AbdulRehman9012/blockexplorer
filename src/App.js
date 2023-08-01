@@ -1,4 +1,4 @@
-import { Alchemy, Network } from 'alchemy-sdk';
+import { Alchemy, Network, toHex } from 'alchemy-sdk';
 import { useEffect, useState } from 'react';
 
 import './App.css';
@@ -21,6 +21,10 @@ const alchemy = new Alchemy(settings);
 
 function App() {
   const [blockNumber, setBlockNumber] = useState();
+  const [blockdata, setblockdata] = useState();
+  const [balance, setBalance] = useState();
+  const [noNFTs, setnoNFTs] = useState();
+  const Address="0xF5dA12442802619352FcD8Cc7245B7f76521d9a4";
 
   useEffect(() => {
     async function getBlockNumber() {
@@ -29,8 +33,38 @@ function App() {
 
     getBlockNumber();
   });
+  
+  useEffect(()=>{
+    async function getBlockData(){
+      setblockdata(await toString(alchemy.core.getBlockWithTransactions(blockNumber)))
+    }
+    
+    getBlockData();
+  });
 
-  return <div className="App">Block Number: {blockNumber}</div>;
+  useEffect(()=>{
+    async function getBalance(){
+      setBalance(await parseFloat(alchemy.core.getBalance(Address)))
+    }
+    
+    getBalance();
+  });
+
+  useEffect(()=>{
+    async function getnoNFTs(){
+      setnoNFTs(await parseInt(alchemy.nft.getNftsForOwner(Address)))
+    }
+    
+    getnoNFTs();
+  })
+
+
+  return <div className='App'>
+    <div className="App">Block Number : {blockNumber}</div>
+    <div className="App">Block data :   {blockdata}</div>
+    <div className="App">Balance :   {balance}</div>
+    <div className="App">No. of NFTs :   {noNFTs}</div>
+  </div>;
 }
 
-export default App;
+export default App;
